@@ -1,0 +1,418 @@
+'''Initial stage: Doesn't do much because it becomes a child in 15 seconds'''
+canvasWidth=750
+canvasHeight=750
+class Egg(object):
+    def __init__(self, name):
+        self.name=name 
+    def onTimerFired(data):
+        return Baby(name,face,happiness,health,age,years,discipline)
+    
+    def draw(self,canvas):
+        eggGif= PhotoImage(file='egg.gif')
+        canvas.create_image(canvasWidth//2, canvasHeight//2,
+                            image=eggGif,anchor=NW) 
+'''Tamagotchi starts out as a baby, uses many of the same functions through
+adult, so it is the super classes the subclasses child and adult inherit''' 
+class Baby(object):
+    def __init__(self,name,face='happy',happiness=100,health=100, age="baby",years=0,discipline=100):
+        #face=demeanor, also signals what to draw
+        #name given by user
+        self.name=name 
+        #meter levels 
+        self.face=face
+        self.happiness=happiness
+        self.health=health
+        self.age=age
+        self.years=years
+        self.discipline=discipline
+    '''incriments down with timerFired, checks level and gives warning
+    or death if too low''' 
+    def onTimerFired(self,data,canvas):
+        self.happy=self.health-1
+        self.health=self.health-1
+        self.discipline=self.discipline-1
+        self.years=self.years+1
+        if self.happy<40:
+            self.warning(canvas)
+            self.sad()
+        if self.health<40:
+            self.warning(canvas)
+            self.sick()
+        if self.discipline<40:
+    
+            self.mad()
+        if (self.happy<20) or (self.health<20) or (self.discipline<20):
+            self.dead()
+    ''' evolves pet into child after 10 minutes (or 10 years in
+Tamagotchi time)''' 
+    def evolve(self):
+        return Child(name,happiness,health,age,years,discipline,warning,dead)
+    ''' these functions change the face of the pet so they can be used in
+the drawFace function''' 
+    def sad(self):
+        self.face='sad'
+
+    def sick(self):
+        self.face='sick'
+
+    def mad(self):
+        #also cannot play games until disciplined
+        self.face='mad'
+    # increases the Discipline meter 
+    def pressD(self):
+        self.discipline=self.discipline+5
+    # for MVP to show incriments of meters 
+    def pressH(self):
+        self.health+=1
+    def pressP(self):
+        self.happy+=1
+        #increases health meter by health game score 
+    def playHealthGame(self,data):
+        self.health+=data.healthScore
+        #increases happy meter by happy game score 
+    def playHappyGame(self,data):
+        self.happy+=data.happyScore 
+    # ends game and shows game over Screen
+    def dead(self,canvas):
+        self.age='dead'
+        canvas.create_rectangle(((canvasWidth//2)-50, (canvasHeight//2)-50,
+                                (canvasWidth//2)+50, (canvasHeight)//2)+50,
+        fill='black')
+        canvas.create_text(canvas.width//2, canvas.height//2,
+                           text="GAME OVER!! Your Tamagotchi:%s was %s years old."%(self.name,self.years),
+                           fill='PaleGreen4',
+                           font='Courier 30')
+        
+    #gives user a warning when one meter dips below 40
+    def Warning(self,canvas):
+        canvas.create_text(data.width//2,
+                           data.height//2,
+                           text='Take care of your pet before they die!',
+                           fill='PaleGreen4',
+                           font='Courier 30')
+        canvas.create_rectangle((canvasWidth//2)-50,(canvasHeight//2)-50,
+                                (canvasWidth//2)+50,
+        (canvasHeight//2)+50, fill='black')
+        '''draw helper functions that draw the meter levels and
+        display their exact amount''' 
+    def HappinessMeter(self,canvas):
+        canvas.create_rectangle(20,20,120,40, fill=None, outline='Black',
+                                width=3)
+        rectangles=(self.happiness//10)
+        #creating the meters according to the amount of happiness 
+        for i in range(rectangles):
+              canvas.create_rectangle(20*(i),60,20*(i+1), 60, fill='Black')
+        
+        #displaying the exact happiness score
+        canvas.create_text(140,20, text='Happiness: %s'%(self.happiness),
+                           font='Courier New 18') 
+    
+    def HealthMeter(self,canvas):
+        canvas.create_rectangle(20,60,120,60, fill=None, outline='Black',
+                                width=3)
+        rectangles=(self.health//10)
+        #creating the meters according to the amount of health
+        for i in range(1,rectangles):
+            canvas.create_rectangle(20*(i),60,20*(i+1), 60, fill='Black')
+        #displaying the exact health score
+        canvas.create_text(140,20, text='Health: %s'(self.health),
+                           font='Courier New 18')
+        
+    def DisciplineMeter(self,canvas):
+        canvas.create_rectangle(20,100,120,100, fill=None, outline='Black',
+                                width=3)
+        for i in range(rectangles):
+            canvas.create_rectangle(20*(i),60,20*(i+1), 60, fill='Black')
+        #displaying the exact health score
+        canvas.create_text(140,20, text='Health: %s'(self.health),
+                           font='Courier New 18')
+    #draws faces according to the mood of the tamagotchi       
+    def drawFace(self,canvas):
+        if self.face==happy:
+            babyHappy= PhotoImage(file='happybaby.gif')
+            canvas.create_image(canvasWidth//2, canvasHeight//2,
+                            image=babyMad,anchor=NW) 
+        if self.face==sick:
+            babySick= PhotoImage(file='sickbaby.gif')
+            canvas.create_image(canvasWidth//2,canvasHeight//2,
+                                image=babySick, anchor=NW)
+        if self.face==mad:
+            babyHappy= PhotoImage(file='madbaby.gif')
+            canvas.create_image(canvasWidth//2, canvasHeight//2,
+                                image=babyHappy, anchor=NW)
+        if self.face==sad:
+            babyMad= PhotoImage(file='sadbaby.gif')
+            canvas.create_image(canvasWidth//2, canvasHeight//2,
+                                image=babymad, anchor=NW) 
+    #draws calling all the helper functions                            
+    def draw(self,canvas):
+        self.HappinessMeter(canvas)
+        self.HealthMeter(canvas)
+        self.DisciplineMeter(canvas)
+        self.drawFace(canvas)
+                                
+#subcclass of baby that is only altered in appearance 
+class Child(Baby):
+    def __init__(self,name,happiness,health,years,discipline,age='child',face='childHappy'):
+        super().__init().__(self,name,happiness,health,age,years,discipline)
+        self.age=age
+        self.face=face
+                                
+    def sad(self):
+        self.face='childSad'
+
+    def sick(self):
+        self.face='childSick'
+
+    def mad(self):
+        #also cannot play games until disciplined
+        self.face='childMad'
+
+    def evolve(self):
+        return Adult(name,face,happiness,health,age,years,discipline,warning)
+    #have to override in each subclass as the pet looks different in every phase 
+    def drawFace(self,canvas):
+        if self.face=='childMad':
+            childMad=PhotoImage(file='childmad.gif') 
+            childSad=canvas.create_image(canvasWidth//2, canvasHeight//2,
+                                         image=childMad, anchor=NW)     
+        if self.face=='childSick':
+            childSick=PhotoImage(file='sickchild.gif')
+            canvas.create_image(canvasWidth//2, canvasHeight//2,
+                                         image=childSick, anchor=NW) 
+        if self.face=='childHappy':
+            childHappy=PhotoImage(file='happychild.gif') 
+            canvas.create_image(canvasWidth//2, canvasHeight//2,
+                                         image=childHappy, anchor=NW) 
+        if self.face=='childSad':
+            childSad=PhotoImage(file='sadchild.gif')
+            canvas.create_image(canvasWidth//2, canvasHeight//2,
+                                         image=childSad, anchor=NW)
+                                
+#subclass of baby that is altered in apperance and does not evolve 
+class Adult(Baby):
+    def __init__(self,name,happiness,health,years,discipline,age='adult', face='adultHappy'):
+        super().__init().__(self,name,happiness,health,age,discipline)
+        self.age=age
+        self.face=face 
+
+    def sad(self):
+        self.face='adultSad'
+
+    def sick(self):
+        self.face='adultSick'
+
+    def mad(self):
+        #can't play games until disciplined 
+        self.face='adultMad'
+
+    def drawFace(self,canvas):
+        if self.face=='adultSick':
+            adultSick=PhotoImage('sickadult.gif')
+            canvas.create_image(canvasWidth//2, canvasHeight//2,
+                                image=adultSad, anchor=NW) 
+        if self.face=='adultMad':
+            adultMad=PhotoImage('madadult.gif')
+            canvas.create_image(canvasWidth//2, canvasHeight//2,
+                                         image=adultMad, anchor=NW)                     
+        if self.face=='adultSad':
+            adultSad=PhotoImage('sadadult.gif')
+            canvas.create_image(canvasWidth//2, canvasHeight//2,
+                                image=adultSick, anchor=NW) 
+        if self.face=='adultHappy':
+            adultHappy=PhotoImage('happyadult.gif') 
+            canvas.create_image(canvasWidth//2, canvasHeight//2,
+                                         image=adultHappy, anchor=NW) 
+
+
+
+from tkinter import *
+
+####################################
+# customize these functions
+####################################
+
+def init(data):
+    data.pause=False
+    data.gameOver=False 
+    data.time=0
+    '''boolean that makes sure that pet is created and what life stage
+it is in''' 
+    data.child=False
+    data.adult=False 
+    #boolean that if true returns to instruction page 
+    data.instructions=True
+    data.mode='mainscreen'
+    # for leaderboard 
+    data.leaderboardset=dict()
+    data.topName=None
+    data.topAge=None 
+    data.happyScore=0
+    data.healthScore=0
+    data.healthgameOver=False
+    data.happyGameOver=False
+    data.name=''
+    data.pet=False
+    data.egg=None
+'''checks if the user pressed the health or happy icon and then opens that mode
+if they did'''
+#in keypressed add name by adding it to a variable in keypressed 
+def mousePressed(event, data):
+    if (event.x>450) and (event.x<500):
+        if (event.y>450) and (event.y<500):
+            if data.mode=='mainscreen':
+                data.mode='happygame'
+#also want to check for health icon 
+def keyPressed(event, data):
+        data.instructions=True
+        if event.keysym!='space':
+            data.name+=event.keysym
+        if event.keysym=='space':
+            data.instructions=False
+            print('y') 
+            data.egg=Egg(data.name)
+        if data.pet==True:
+            if event.keysym=='D':
+                baby.pressD()
+            if event.keysym=='H':
+                baby.pressH()
+            if event.keysym=='Y':
+                baby.pressY()
+        
+        
+  #creates the icon that leads to the health game    
+def healthIcon(data,canvas):
+    canvas.create_rectangle(100, (data.height-200), 200, (data.height-50),
+                                fill='black') 
+# creates the icon that leads to the playgame 
+def playIcon(data,canvas):
+    r=50
+    canvas.create_oval((data.width-100)-r,
+                       (data.height-100)-r, (data.width-100)+r, (data.height-100)+r,
+                       fill=None, outline='Black', width=4)
+    canvas.create
+#shows instructions before the user names the pet 
+def instructions(canvas,data):
+    canvas.create_text(data.width//2, data.height*(1/4),
+                       text="Welcome to Tamagotchi! Watch your pet go through the phases of life:",
+                       font='Courier 17')
+    canvas.create_text(data.width//2,data.height*(1/4)+20,
+    text="baby, child, and adult. Make sure to keep your pets's meters high",
+                       font='Courier 17')
+    canvas.create_text(data.width//2, data.height*(1/4)+40,
+    text='or they will die! Play the minigames to increase the happiness',
+    font='Courier 17')
+    canvas.create_text(data.width//2, data.height*(1/4)+60, 
+    text="and health meter and press 'd' to discipline your pet.",
+                       font='Courier 17')
+    canvas.create_text(data.width//2, data.height*(1/4)+80,
+    text='Name your Pet! Press spacebar when done.',
+    font='Courier 17') 
+   
+    
+def timerFired(data):
+    if (data.pause==False) and (data.instructions==False):
+        data.time+=1
+        if data.time==150:
+            data.baby=data.egg.onTimerFired(data)
+            data.pet==True
+        if (data.time>=150) and (data.time<1000):
+            data.baby.onTimerFired(data,canvas)
+        if data.time==1000:
+            data.child=data.baby.evolve()
+        if (data.time>1000) and (data.time<2000):
+            data.child.onTimerFired(data,canvas)
+        if data.time==2000:
+            data.adult=data.child.evolve()
+        if data.time>2000:
+            data.adult.onTimerFired(data,canvas)
+        if data.pet==True and data.baby.age=='dead':
+            data.gameOver==True
+        if data.baby.gameOver==True:
+            data.time=0
+            if data.time==900:
+                data.mode='leaderboard'
+            
+        
+        
+
+def pauseDraw(data, canvas):
+    canvas.create_text(data.width//2, data.height//2, text='Game Paused and Saved',
+                           font='Courier New 50')
+    canvas.create_rectangle(0,0, canvas.width,canvas.height, fill='PaleGreen4')
+        
+def gameOverDraw(canvas):
+    data.baby.dead(canvas)
+    data.pets.append(data.baby)
+#leaderboard for the dead pets 
+def leaderBoardHelper(canvas,data):
+    if data.mode=='leaderboard':
+        for i in range(len(data.baby)):
+            data.leaderboard
+            
+        
+                
+    
+
+def redrawAll(canvas, data):
+    canvas.create_rectangle(0,0, data.width,data.height, fill='PaleGreen4')
+    if data.instructions:
+        instructions(canvas,data)
+    if data.pause:
+        data.baby.pauseDraw(data,canvas)
+    if data.gameOver==True:
+        baby.gameOverDraw(canvas)
+    if (data.pet==False) and (data.instructions==False) and (data.egg!=None):
+        data.egg.draw(canvas)
+        playIcon(data,canvas)
+        healthIcon(data,canvas) 
+ 
+'''Citation:https://www.cs.cmu.edu/~112/notes/notes-animations-part2.html'''
+####################################
+# use the run function as-is
+####################################
+
+def run(width=300, height=300):
+    def redrawAllWrapper(canvas, data):
+        canvas.delete(ALL)
+        canvas.create_rectangle(0, 0, data.width, data.height,
+                                fill='white', width=0)
+        redrawAll(canvas, data)
+        canvas.update()
+
+    def mousePressedWrapper(event, canvas, data):
+        mousePressed(event, data)
+        redrawAllWrapper(canvas, data)
+
+    def keyPressedWrapper(event, canvas, data):
+        keyPressed(event, data)
+        redrawAllWrapper(canvas, data)
+
+    def timerFiredWrapper(canvas, data):
+        timerFired(data)
+        redrawAllWrapper(canvas, data)
+        # pause, then call timerFired again
+        canvas.after(data.timerDelay, timerFiredWrapper, canvas, data)
+    # Set up data and call init
+    class Struct(object): pass
+    data = Struct()
+    data.width = width
+    data.height = height
+    data.timerDelay = 100 # milliseconds
+    root = Tk()
+    init(data)
+    # create the root and the canvas
+    canvas = Canvas(root, width=data.width, height=data.height)
+    canvas.configure(bd=0, highlightthickness=0)
+    canvas.pack()
+    # set up events
+    root.bind("<Button-1>", lambda event:
+                            mousePressedWrapper(event, canvas, data))
+    root.bind("<Key>", lambda event:
+                            keyPressedWrapper(event, canvas, data))
+    timerFiredWrapper(canvas, data)
+    # and launch the app
+    root.mainloop()  # blocks until window is closed
+    print("bye!")
+
+run(1000, 1000)
